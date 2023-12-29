@@ -11,7 +11,10 @@ from gxai.feature_types import (
 )
 from .random import randfloat
 
-def init_toolbox(evaluate: Callable[[], float], feature_types: List[FeatureType]) -> Any:
+
+def init_toolbox(
+    evaluate: Callable[[], float], feature_types: List[FeatureType]
+) -> Any:
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
     creator.create("Individual", list, fitness=creator.FitnessMax)
 
@@ -28,9 +31,8 @@ def init_toolbox(evaluate: Callable[[], float], feature_types: List[FeatureType]
     toolbox.register("select", tools.selTournament, tournsize=3)
     return toolbox
 
-def create_individual(
-    container: Callable, feature_types: List[FeatureType]
-):
+
+def create_individual(container: Callable, feature_types: List[FeatureType]):
     x = []
     for feature_type in feature_types:
         if feature_type == CategoricalFeature:
@@ -61,15 +63,9 @@ def mixed_data_mutation(
             individual[i] = random.choice(feature_type.unique_values)
 
         elif feature_type == ContinuousFeature:
-            # TODO: find better mu and sigma values based on value range
-            mutated_value = individual[i] + random.gauss(mu=0, sigma=feature_type.stdev)
-            mutated_value = min(mutated_value, feature_type.max)
-            mutated_value = max(mutated_value, feature_type.min)
-            individual[i] = mutated_value
-
+            individual[i] = randfloat(feature_type.min, feature_type.max)
+            
         else:
             raise NotImplementedError()
 
     return (individual,)
-
-
