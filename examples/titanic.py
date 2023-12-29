@@ -104,7 +104,7 @@ def evaluation_function(classifier, population: List[Tuple]) -> List[float]:
 
 
 def run_titanic_example():
-    train_csv_path = ""
+    train_csv_path = "./data/titanic/train.csv"
 
     X, y = load_titanic(path=train_csv_path)
     feature_types = create_titanic_feature_types(X)
