@@ -15,6 +15,7 @@ from gxai import (
     run_genetic_algorithm,
     compute_feature_importance_scores,
     generate_comparison_charts,
+    GAParams,
 )
 
 
@@ -238,10 +239,12 @@ def reverse_map_adult(data: pd.DataFrame) -> pd.DataFrame:
 
     return data
 
+
 def evaluation_function(classifier, population: List[Tuple]) -> List[float]:
     prediction = classifier.predict_proba(population)
     fitness = [(result[1],) for result in prediction]
     return fitness
+
 
 def run_adult_example():
     train_csv_path = "./data/adult/adult.data"
@@ -253,8 +256,9 @@ def run_adult_example():
 
     evaluate = partial(evaluation_function, classifier)
 
+    params = GAParams(population_size=10000, max_generations=100)
     original_population, improved_population = run_genetic_algorithm(
-        feature_types, column_names=X.columns, evaluate=evaluate
+        feature_types, column_names=X.columns, evaluate=evaluate, params=params
     )
 
     importance_scores = compute_feature_importance_scores(
