@@ -3,6 +3,7 @@
 from functools import partial
 import numpy as np
 import pandas as pd
+from sklearn.inspection import permutation_importance
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.neural_network import MLPClassifier
@@ -17,6 +18,22 @@ from gxai import (
     generate_comparison_charts,
     GAParams,
 )
+
+
+def compute_pertubation_feature_importances(
+    model, X: pd.DataFrame, y: pd.DataFrame, relative: bool = True
+) -> List[float]:
+    result = permutation_importance(
+        model, X.values, y.values, n_repeats=20, random_state=0
+    )
+    importances = result.importances_mean
+
+    if relative:
+        importance_sum = sum(importances)
+        for i in range(len(importances)):
+            importances[i] = importances[i] / importance_sum
+
+    return importances
 
 
 def load_adult(path: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -64,12 +81,24 @@ def load_adult(path: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
             else:
                 data[k] = data[k].cat.codes
 
+    data["random1"] = np.random.rand(len(data)) - 0.5
+    data["random2"] = 10 * np.random.rand(len(data)) - 5
+    data["random3"] = 100 * np.random.rand(len(data)) - 50
+
     return data.drop(["Target", "fnlwgt"], axis=1), data["Target"]
 
 
 def create_adult_feature_types(data: pd.DataFrame) -> List[FeatureType]:
     feature_types: List[FeatureType] = []
-    continuous_features = ["Age", "Capital Gain", "Capital Loss", "Hours per week"]
+    continuous_features = [
+        "Age",
+        "Capital Gain",
+        "Capital Loss",
+        "Hours per week",
+        "random1",
+        "random2",
+        "random3",
+    ]
     custom_bounds = {"Age": (0, 100), "Hours per week": (0, 168)}
 
     for column in data.columns:
@@ -99,6 +128,11 @@ def create_adult_feature_types(data: pd.DataFrame) -> List[FeatureType]:
 def train_classifier(
     train: pd.DataFrame, target: pd.DataFrame, evaluate_score: bool = False
 ):
+    train = train.copy()
+    train[-1] = 0
+    train[-2] = 0
+    train[-3] = 0
+
     clf = MLPClassifier(random_state=1, max_iter=300).fit(train, target)
 
     if evaluate_score:
@@ -256,7 +290,7 @@ def run_adult_example():
 
     evaluate = partial(evaluation_function, classifier)
 
-    params = GAParams(population_size=10000, max_generations=100)
+    params = GAParams(population_size=10000, max_generations=70)
     original_population, improved_population = run_genetic_algorithm(
         feature_types, column_names=X.columns, evaluate=evaluate, params=params
     )
@@ -266,6 +300,15 @@ def run_adult_example():
     )
     for feature_name, importance in zip(X.columns, importance_scores):
         print(f"{feature_name}: {importance}")
+
+    print("\nPertubation Feature Importances:")
+    pertubation_feature_importances = compute_pertubation_feature_importances(
+        classifier, X=X, y=y
+    )
+    for feature_name, importance in zip(X.columns, pertubation_feature_importances):
+        print(f"{feature_name}: {importance}")
+
+    raise
 
     original_population = reverse_map_adult(original_population)
     improved_population = reverse_map_adult(improved_population)
