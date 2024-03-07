@@ -8,6 +8,7 @@ def _matrix_to_tuple(function):
     """
     A decorator function to convert lists into tuples so they can be used as keys for caching.
     """
+
     # Internally, lru_cache stores parameters as dictionary
     # keys and the return values as corresponding values.
     # As such, the parameters of the cached function have to

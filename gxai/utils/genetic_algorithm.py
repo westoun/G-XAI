@@ -64,7 +64,7 @@ def mixed_data_mutation(
 
         elif feature_type == ContinuousFeature:
             individual[i] = randfloat(feature_type.min, feature_type.max)
-            
+
         else:
             raise NotImplementedError()
 
