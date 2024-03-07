@@ -9,46 +9,6 @@ from gxai.feature_types import FeatureType, CategoricalFeature, ContinuousFeatur
 from .matrix import transpose_values
 
 
-
-def compute_randomness(
-    population: List[Tuple], feature_types: List[FeatureType]
-) -> float:
-    """
-    Compute the randomness of the entire population.
-
-    Args:
-        population: A list of tuples representing the entire population.
-        feature_types: A list of FeatureType instances corresponding to the features of the population.
-
-    Returns:
-        The computed randomness of the population as a float.
-
-    Raises:
-        NotImplementedError: If an unsupported feature type is encountered.
-    """
-    transposed_population = transpose_values(population)
-
-    feature_randomnesses: List[float] = []
-    for feature_values, feature_type in zip(transposed_population, feature_types):
-        if feature_type == CategoricalFeature:
-            feature_randomness = compute_categorical_randomness(
-                feature_values, feature_type
-            )
-            feature_randomnesses.append(feature_randomness)
-
-        elif feature_type == ContinuousFeature:
-            feature_randomness = compute_continuous_randomness(
-                feature_values, feature_type
-            )
-            feature_randomnesses.append(feature_randomness)
-
-        else:
-            raise NotImplementedError()
-
-    population_randomness = mean(feature_randomnesses)
-    return population_randomness
-
-
 def compute_continuous_randomness(
     feature_values: List, feature_type: ContinuousFeature
 ) -> float:
