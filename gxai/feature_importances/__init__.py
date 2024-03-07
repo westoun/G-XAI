@@ -5,6 +5,7 @@ from typing import List, Tuple, Any, Callable
 from gxai.feature_types import FeatureType, ContinuousFeature, CategoricalFeature
 from gxai.utils.matrix import transpose_values
 from .contrast_entropy import compute_contrast_entropy_importance
+from .wasserstein import compute_contrast_wasserstein_importance
 
 
 def compute_feature_importance_scores(

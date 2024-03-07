@@ -16,7 +16,8 @@ from gxai import (
     compute_feature_importance_scores,
     generate_comparison_charts,
 )
-from gxai.feature_importances import compute_contrast_entropy_importance
+from gxai.feature_importances import compute_contrast_entropy_importance, \
+    compute_contrast_wasserstein_importance
 
 
 def train_classifier(
@@ -120,7 +121,7 @@ def run_titanic_example():
     importance_scores = compute_feature_importance_scores(
         improved_population,
         feature_types,
-        compute_importance=compute_contrast_entropy_importance,
+        compute_importance=compute_contrast_wasserstein_importance,
     )
     for feature_name, importance in zip(X.columns, importance_scores):
         print(f"{feature_name}: {importance}")

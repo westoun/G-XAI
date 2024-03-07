@@ -18,7 +18,10 @@ from gxai import (
     generate_comparison_charts,
     GAParams,
 )
-from gxai.feature_importances import compute_contrast_entropy_importance
+from gxai.feature_importances import (
+    compute_contrast_entropy_importance,
+    compute_contrast_wasserstein_importance,
+)
 
 
 def compute_pertubation_feature_importances(
@@ -299,7 +302,7 @@ def run_adult_example():
     importance_scores = compute_feature_importance_scores(
         improved_population,
         feature_types,
-        compute_importance=compute_contrast_entropy_importance,
+        compute_importance=compute_contrast_wasserstein_importance,
     )
     for feature_name, importance in zip(X.columns, importance_scores):
         print(f"{feature_name}: {importance}")
@@ -310,8 +313,6 @@ def run_adult_example():
     )
     for feature_name, importance in zip(X.columns, pertubation_feature_importances):
         print(f"{feature_name}: {importance}")
-
-    raise
 
     original_population = reverse_map_adult(original_population)
     improved_population = reverse_map_adult(improved_population)
