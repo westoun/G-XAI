@@ -10,13 +10,14 @@ class CategoricalFeature(FeatureType):
     Class to represent categorical features in a dataset.
 
     This class extends from the FeatureType interface and provides implementation
-    specific to categorical features. It stores the title of the feature and a list of 
+    specific to categorical features. It stores the title of the feature and a list of
     its unique values.
 
     Methods:
         __str__: Returns a formatted string representation of the CategoricalFeature.
         __eq__: Overloaded equality operator for comparing instances of CategoricalFeature with types.
     """
+
     def __init__(self, title: str, values: List[Any]) -> None:
         self._title = title
         self._unique_values = list(set(values))
@@ -28,6 +29,10 @@ class CategoricalFeature(FeatureType):
     @property
     def unique_values(self) -> List:
         return self._unique_values
+
+    def set_unique_values(self, unique_values: List) -> "CategoricalFeature":
+        self._unique_values = unique_values
+        return self
 
     def __str__(self) -> str:
         return f"""
