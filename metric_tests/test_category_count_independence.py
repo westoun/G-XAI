@@ -16,7 +16,6 @@ from gxai import FeatureType, CategoricalFeature, ContinuousFeature
 def run_category_count_independence_test(
     compute_importance: Callable[[List[float], FeatureType], float]
 ):
-
     MAX_CATEGORIES = 20
     DISTRIBUTION_COUNT = 1000
     SAMPLE_SIZE = 1000

@@ -8,6 +8,7 @@ from metric_tests import (
     run_range_independence_test,
     run_middle_value_independence_test,
     run_type_independence_test,
+    run_edge_case_behavior_test
 )
 
 if __name__ == "__main__":
@@ -17,3 +18,4 @@ if __name__ == "__main__":
     run_range_independence_test(importance_score)
     run_middle_value_independence_test(importance_score)
     run_type_independence_test(importance_score)
+    run_edge_case_behavior_test(importance_score)
