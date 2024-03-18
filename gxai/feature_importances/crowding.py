@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from scipy.stats import chisquare
+from scipy.spatial import distance
 from statistics import mean
 from typing import List, Tuple
 
@@ -65,16 +65,20 @@ def compute_categorical_contrast_crowding(
 ) -> float:
     unique_values = feature_type.unique_values
 
-    actual_frequencies = [
+    actual_probabilities = [
         feature_values.count(unique_value) / len(feature_values)
         for unique_value in unique_values
     ]
+    uniform_probability = 1 / len(unique_values)
 
-    extreme_frequencies = [1]
-    for i in range(len(unique_values) - 1):
-        extreme_frequencies.append(0)
+    uniform_probabilities = [
+        uniform_probability for _ in unique_values
+    ]
 
-    actual_chisquare = chisquare(actual_frequencies).statistic
-    extreme_chisquare = chisquare(extreme_frequencies).statistic
+    extreme_probabilities = [0 for _ in unique_values]
+    extreme_probabilities[0] = 1
 
-    return actual_chisquare / extreme_chisquare
+    actual_distance = distance.euclidean(actual_probabilities, uniform_probabilities)
+    extreme_distance = distance.euclidean(extreme_probabilities, uniform_probabilities)
+
+    return actual_distance / extreme_distance
