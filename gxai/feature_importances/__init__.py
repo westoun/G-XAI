@@ -7,6 +7,7 @@ from gxai.utils.matrix import transpose_values
 from .contrast_entropy import compute_contrast_entropy_importance
 from .wasserstein import compute_contrast_wasserstein_importance
 from .gini import compute_gini_importance
+from .crowding import compute_contrast_crowding_importance
 
 
 def compute_feature_importance_scores(
